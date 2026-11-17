@@ -37,6 +37,10 @@ curl http://127.0.0.1:8000/health   # {"status":"ok"}
 
 The service binds to localhost by default (Product Scope 9.2).
 
+### Logging
+
+Logs are JSON, one object per line on stderr, with the level taken from `KANON_LOG_LEVEL`. Each HTTP request produces exactly one line with `method`, `path`, `status` and `duration_ms`. Log identifiers, never document content.
+
 ### Lint and format
 
 ```bash
