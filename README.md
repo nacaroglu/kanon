@@ -37,6 +37,16 @@ curl http://127.0.0.1:8000/health   # {"status":"ok"}
 
 The service binds to localhost by default (Product Scope 9.2).
 
+### Run with Docker Compose
+
+```bash
+cp .env.example .env     # credentials come from this file
+docker compose up --build
+curl http://127.0.0.1:8000/health
+```
+
+Database data lives in the named volume `db-data` and survives `docker compose down` / `up`. Use `docker compose down -v` to delete it.
+
 ### Run in Docker
 
 ```bash
