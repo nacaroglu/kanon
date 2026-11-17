@@ -7,3 +7,13 @@ Kanon is a document-driven workflow tool: it turns source documents into reviewe
 ## Documentation
 
 - [Product Scope v1.3](docs/product-scope-v1.3.md) — the agreed scope of Kanon v1.
+
+## Development setup
+
+Requires [uv](https://docs.astral.sh/uv/). From a fresh clone:
+
+```bash
+uv sync
+```
+
+See [ADR-001](docs/adr/001-python-tooling.md) for the tooling decisions.
