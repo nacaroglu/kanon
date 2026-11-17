@@ -18,6 +18,16 @@ uv sync
 
 See [ADR-001](docs/adr/001-python-tooling.md) for the tooling decisions.
 
+### Configuration
+
+Settings are read only through `kanon.settings.Settings` (environment variables with the `KANON_` prefix, or a `.env` file). Copy the example and adjust:
+
+```bash
+cp .env.example .env
+```
+
+`KANON_DATABASE_URL` is required; the app refuses to start without it. `.env` is ignored by Git.
+
 ### Run the API
 
 ```bash
