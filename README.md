@@ -30,3 +30,11 @@ uv run ruff format .         # format (use `--check` to only report)
 ```bash
 uv run pytest
 ```
+
+### Pre-commit hooks
+
+Install once per clone; afterwards Ruff lint and format run on every commit:
+
+```bash
+uv run pre-commit install
+```
