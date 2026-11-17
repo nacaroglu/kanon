@@ -45,6 +45,8 @@ docker compose up --build
 curl http://127.0.0.1:8000/health
 ```
 
+**Localhost only.** Kanon v1 is single-user with no authentication (Product Scope 9.2), so published ports are bound to `127.0.0.1` only (`127.0.0.1:8000:8000`). The service is not reachable from other machines. The database port is not published at all. Inside the container uvicorn still listens on all interfaces; the restriction is the port mapping. Do not change it to `0.0.0.0` or `8000:8000`.
+
 Database data lives in the named volume `db-data` and survives `docker compose down` / `up`. Use `docker compose down -v` to delete it.
 
 ### Run in Docker
