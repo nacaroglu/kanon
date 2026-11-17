@@ -28,6 +28,21 @@ cp .env.example .env
 
 `KANON_DATABASE_URL` is required; the app refuses to start without it. `.env` is ignored by Git.
 
+### Database migrations
+
+Schema changes go through Alembic; the database URL is read from settings (`KANON_DATABASE_URL`), never from `alembic.ini`.
+
+```bash
+# Against the Compose database (the db port is not published, so run inside the stack):
+docker compose run --rm backend alembic upgrade head
+docker compose run --rm backend alembic downgrade base
+
+# Against any database reachable from the host:
+KANON_DATABASE_URL=postgresql://user:pass@localhost:5432/kanon uv run alembic upgrade head
+```
+
+Create a revision with `uv run alembic revision -m "describe the change"`.
+
 ### Run the API
 
 ```bash
