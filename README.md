@@ -18,6 +18,15 @@ uv sync
 
 See [ADR-001](docs/adr/001-python-tooling.md) for the tooling decisions.
 
+### CLI
+
+```bash
+uv run kanon --help
+uv run kanon version
+```
+
+The CLI calls application code in-process rather than going through HTTP.
+
 ### Lint and format
 
 ```bash
