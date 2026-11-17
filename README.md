@@ -17,3 +17,10 @@ uv sync
 ```
 
 See [ADR-001](docs/adr/001-python-tooling.md) for the tooling decisions.
+
+### Lint and format
+
+```bash
+uv run ruff check .          # lint
+uv run ruff format .         # format (use `--check` to only report)
+```
