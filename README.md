@@ -38,3 +38,7 @@ Install once per clone; afterwards Ruff lint and format run on every commit:
 ```bash
 uv run pre-commit install
 ```
+
+### Continuous integration
+
+GitHub Actions (`.github/workflows/ci.yml`) runs on every pull request and push to `main`. It installs from the lockfile (`uv sync --frozen`), then runs lint, the format check and the tests: the same commands as above.
