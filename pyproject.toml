@@ -16,6 +16,7 @@ packages = ["src/kanon"]
 
 [dependency-groups]
 dev = [
+    "pytest>=9.2.0",
     "ruff>=0.17.5",
 ]
 
@@ -26,3 +27,6 @@ src = ["src", "tests"]
 [tool.ruff.lint]
 # Small starter set: pycodestyle, pyflakes, isort, pyupgrade, bugbear.
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
