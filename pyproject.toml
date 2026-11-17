@@ -5,7 +5,10 @@ description = "Kanon: early development."
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 license = { file = "LICENSE" }
-dependencies = []
+dependencies = [
+    "fastapi>=0.163.1",
+    "uvicorn[standard]>=0.54.0",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -16,6 +19,7 @@ packages = ["src/kanon"]
 
 [dependency-groups]
 dev = [
+    "httpx2>=2.16.2",
     "pre-commit>=4.7.0",
     "pytest>=9.2.0",
     "ruff>=0.17.5",

@@ -18,6 +18,15 @@ uv sync
 
 See [ADR-001](docs/adr/001-python-tooling.md) for the tooling decisions.
 
+### Run the API
+
+```bash
+uv run uvicorn kanon.api.app:create_app --factory --reload
+curl http://127.0.0.1:8000/health   # {"status":"ok"}
+```
+
+The service binds to localhost by default (Product Scope 9.2).
+
 ### Lint and format
 
 ```bash
