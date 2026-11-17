@@ -37,6 +37,16 @@ curl http://127.0.0.1:8000/health   # {"status":"ok"}
 
 The service binds to localhost by default (Product Scope 9.2).
 
+### Run in Docker
+
+```bash
+docker build -t kanon-backend .
+docker run --rm -p 127.0.0.1:8000:8000 -e KANON_DATABASE_URL=postgresql://x/y kanon-backend
+curl http://127.0.0.1:8000/health
+```
+
+The image installs from `uv.lock`, runs as a non-root user, and keeps dependencies in a separate layer from application code.
+
 ### Lint and format
 
 ```bash
