@@ -1,0 +1,3 @@
+# Fixture content feeds deterministic Git hashes: never convert line endings.
+fixtures/sample-procedures/** -text
+scripts/*.sh text eol=lf
