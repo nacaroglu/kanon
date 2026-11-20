@@ -7,6 +7,7 @@ Kanon is a document-driven workflow tool: it turns source documents into reviewe
 ## Documentation
 
 - [Product Scope v1.3](docs/product-scope-v1.3.md) — the agreed scope of Kanon v1.
+- [ADR-002](docs/adr/002-procedure-repository.md) — how approved procedures are stored and split into sections.
 
 ## Development setup
 
