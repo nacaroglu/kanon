@@ -20,6 +20,9 @@ services:
       KANON_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       KANON_LOG_LEVEL: ${KANON_LOG_LEVEL:-INFO}
       KANON_PROCEDURE_REPO_PATH: /data/procedures
+      KANON_LLM_BASE_URL: ${KANON_LLM_BASE_URL:-}
+      KANON_LLM_API_KEY: ${KANON_LLM_API_KEY:-}
+      KANON_LLM_MODEL: ${KANON_LLM_MODEL:-}
     volumes:
       # The approved procedure repository, mounted read-only. Create the sample one with
       # scripts/make-sample-repo.sh ./procedure-repo, or point the host path at your own.

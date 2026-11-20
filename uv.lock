@@ -233,6 +233,7 @@ dependencies = [
     { name = "alembic" },
     { name = "dulwich" },
     { name = "fastapi" },
+    { name = "httpx2" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic-settings" },
     { name = "sqlalchemy" },
@@ -242,7 +243,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "httpx2" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "ruff" },
@@ -253,6 +253,7 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.20.1" },
     { name = "dulwich", specifier = ">=1.2.21" },
     { name = "fastapi", specifier = ">=0.163.1" },
+    { name = "httpx2", specifier = ">=2.16.2" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.9" },
     { name = "pydantic-settings", specifier = ">=2.16.3" },
     { name = "sqlalchemy", specifier = ">=2.1.9" },
@@ -262,7 +263,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "httpx2", specifier = ">=2.16.2" },
     { name = "pre-commit", specifier = ">=4.7.0" },
     { name = "pytest", specifier = ">=9.2.0" },
     { name = "ruff", specifier = ">=0.17.5" },
