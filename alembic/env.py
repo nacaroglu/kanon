@@ -3,12 +3,12 @@
 from alembic import context
 
 from kanon.db import get_engine
+from kanon.models import Base
 from kanon.settings import get_settings
 
 config = context.config
 
-# Models arrive in later issues; they will set this to their metadata.
-target_metadata = None
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:

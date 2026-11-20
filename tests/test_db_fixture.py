@@ -20,5 +20,10 @@ def test_insert_same_row_second(db_session):
 
 
 def test_migrations_applied(db_session):
+    from alembic.script import ScriptDirectory
+
+    from conftest import alembic_config
+
+    head = ScriptDirectory.from_config(alembic_config()).get_current_head()
     version = db_session.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
-    assert version == "0001"
+    assert version == head
