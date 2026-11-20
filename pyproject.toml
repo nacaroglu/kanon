@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12,<3.13"
 license = { file = "LICENSE" }
 dependencies = [
-
     "typer>=0.29.1",
     "alembic>=1.20.1",
     "fastapi>=0.163.1",
@@ -14,6 +13,7 @@ dependencies = [
     "pydantic-settings>=2.16.3",
     "sqlalchemy>=2.1.9",
     "uvicorn[standard]>=0.54.0",
+    "dulwich>=1.2.21",
 ]
 
 [project.scripts]
