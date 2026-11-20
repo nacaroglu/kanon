@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.12,<3.13"
 license = { file = "LICENSE" }
 dependencies = [
+
+    "typer>=0.29.1",
     "alembic>=1.20.1",
     "fastapi>=0.163.1",
     "psycopg[binary]>=3.3.9",
@@ -13,6 +15,9 @@ dependencies = [
     "sqlalchemy>=2.1.9",
     "uvicorn[standard]>=0.54.0",
 ]
+
+[project.scripts]
+kanon = "kanon.cli:app"
 
 [build-system]
 requires = ["hatchling"]
