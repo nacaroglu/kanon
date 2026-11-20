@@ -96,3 +96,12 @@ def test_repository_without_commits_raises_domain_error(tmp_path):
 def test_domain_errors_share_a_base_class():
     assert issubclass(NotAGitRepositoryError, RepositoryError)
     assert issubclass(EmptyRepositoryError, RepositoryError)
+
+
+def test_get_commit_resolves_hash_prefix_and_ref(sample_repo):
+    first = sample_repo.commits[0]
+    with ProcedureRepository(sample_repo.path) as repo:
+        assert repo.get_commit().hash == sample_repo.head
+        assert repo.get_commit(first[:8]).hash == first
+        assert repo.get_commit("main").hash == sample_repo.head
+        assert repo.get_commit(first).committed_at == datetime(2026, 1, 5, 9, 0, tzinfo=UTC)
