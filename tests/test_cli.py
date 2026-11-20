@@ -54,6 +54,18 @@ def test_init_imports_the_fixture_and_prints_counts(cli_database, sample_repo):
     assert row_counts(cli_database) == (3, 10)
 
 
+def test_init_twice_changes_nothing_and_says_so(cli_database, sample_repo):
+    first = runner.invoke(app, ["init", str(sample_repo.path)])
+    counts_after_first = row_counts(cli_database)
+    second = runner.invoke(app, ["init", str(sample_repo.path)])
+
+    assert first.exit_code == second.exit_code == 0, second.output
+    assert second.stdout.strip() == (
+        f"Nothing to import: commit {sample_repo.head} is already imported"
+    )
+    assert row_counts(cli_database) == counts_after_first == (3, 10)
+
+
 def test_init_uses_the_configured_repository_by_default(cli_database, sample_repo, monkeypatch):
     monkeypatch.setenv("KANON_PROCEDURE_REPO_PATH", str(sample_repo.path))
 
