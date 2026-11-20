@@ -19,6 +19,8 @@ RUN --mount=type=cache,target=/home/kanon/.cache/uv,uid=1000,gid=1000 \
 
 # Application layer: rebuilt on every source change, without reinstalling dependencies.
 COPY --chown=kanon:kanon src ./src
+COPY --chown=kanon:kanon alembic.ini ./
+COPY --chown=kanon:kanon alembic ./alembic
 RUN --mount=type=cache,target=/home/kanon/.cache/uv,uid=1000,gid=1000 \
     uv sync --frozen --no-dev
 
