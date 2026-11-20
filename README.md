@@ -87,6 +87,14 @@ uv run ruff format .         # format (use `--check` to only report)
 uv run pytest
 ```
 
+Database tests need a real PostgreSQL and are skipped unless `KANON_TEST_DATABASE_URL` points at a throwaway database (migrations are applied to it once per session; each test runs in a rolled-back transaction):
+
+```bash
+KANON_TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/kanon_test uv run pytest
+```
+
+CI provides a PostgreSQL service and runs these tests.
+
 ### Pre-commit hooks
 
 Install once per clone; afterwards Ruff lint and format run on every commit:
