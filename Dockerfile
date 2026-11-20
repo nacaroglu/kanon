@@ -9,7 +9,9 @@ ENV UV_COMPILE_BYTECODE=1 \
 
 RUN useradd --create-home --uid 1000 kanon
 WORKDIR /app
-RUN chown kanon:kanon /app
+# /data/sources is the mount point of the source-data volume; creating it here (owned by the
+# unprivileged user) is what makes a fresh named volume writable.
+RUN chown kanon:kanon /app && mkdir -p /data/sources && chown kanon:kanon /data/sources
 USER kanon
 
 # Dependency layer: rebuilt only when pyproject.toml or uv.lock change.

@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     # Directory holding the approved procedure repository. Only its existence is checked
     # here; whether it is a Git repository is checked when the repository is opened.
     procedure_repo_path: Path | None = None
+    # Where submitted source files are stored, named by content hash. Created on first use.
+    source_storage_dir: Path = Path("data/sources")
 
     @field_validator("procedure_repo_path")
     @classmethod
