@@ -48,6 +48,9 @@ def init(
         _fail(f"invalid configuration: {error.errors()[0]['loc'][0]}: {error.errors()[0]['msg']}")
     except SQLAlchemyError as error:
         _fail(f"database error: {type(error).__name__}")
+    if summary.already_imported:
+        typer.echo(f"Nothing to import: commit {summary.commit_hash} is already imported")
+        return
     typer.echo(
         f"Imported {summary.files} procedures ({summary.sections} sections) "
         f"from commit {summary.commit_hash}"

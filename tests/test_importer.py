@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 
 from kanon.models import Procedure, ProcedureSection
 from kanon.procedures import importer
@@ -149,16 +150,66 @@ def test_failure_after_earlier_files_were_added_rolls_everything_back(
         assert import_procedures(db_session, repo).files == 3
 
 
-def test_database_failure_rolls_back_the_whole_import(db_session, sample_repo):
+def test_importing_the_same_commit_twice_changes_nothing(db_session, sample_repo):
+    with ProcedureRepository(sample_repo.path) as repo:
+        first = import_procedures(db_session, repo)
+        before = counts(db_session)
+        second = import_procedures(db_session, repo)
+
+    assert (first.files, first.sections, first.already_imported) == (3, 10, False)
+    assert (second.files, second.sections, second.already_imported) == (0, 0, True)
+    assert second.commit_hash == first.commit_hash
+    assert counts(db_session) == before == (3, 10)
+
+
+def test_a_different_spelling_of_the_same_commit_is_still_a_repeat(db_session, sample_repo):
+    with ProcedureRepository(sample_repo.path) as repo:
+        import_procedures(db_session, repo, "main")
+        again = import_procedures(db_session, repo, sample_repo.head[:12])
+
+    assert again.already_imported
+    assert counts(db_session) == (3, 10)
+
+
+def test_each_commit_is_imported_once_independently(db_session, sample_repo):
+    first_commit = sample_repo.commits[0]
+    with ProcedureRepository(sample_repo.path) as repo:
+        import_procedures(db_session, repo, first_commit)
+        head = import_procedures(db_session, repo)  # a different commit is not a repeat
+
+    assert not head.already_imported
+    assert counts(db_session) == (1 + 3, 4 + 10)
+
+
+def test_the_constraint_catches_a_race_the_check_misses(db_session, sample_repo, monkeypatch):
+    """Check-then-insert alone is not enough: two imports can both pass the check."""
     with ProcedureRepository(sample_repo.path) as repo:
         import_procedures(db_session, repo)
         before = counts(db_session)
 
-        # Importing the same commit again violates the unique (commit, path) rule.
-        with pytest.raises(Exception, match="uq_procedures_commit_hash_path"):
-            import_procedures(db_session, repo)
+        calls = []
+        real = importer._is_imported
 
+        def blind_first_check(session, commit_hash):
+            calls.append(commit_hash)
+            return False if len(calls) == 1 else real(session, commit_hash)
+
+        monkeypatch.setattr(importer, "_is_imported", blind_first_check)
+        result = import_procedures(db_session, repo)
+
+    assert result.already_imported
+    assert len(calls) == 2  # the check was fooled once; the constraint caught it
     assert counts(db_session) == before
+
+
+def test_integrity_errors_that_are_not_a_repeat_still_surface(db_session, sample_repo, monkeypatch):
+    def always_collide(session, files, commit_hash):
+        raise IntegrityError("INSERT", {}, Exception("some other violation"))
+
+    monkeypatch.setattr(importer, "_store", always_collide)
+
+    with ProcedureRepository(sample_repo.path) as repo, pytest.raises(IntegrityError):
+        import_procedures(db_session, repo)
 
 
 def test_importer_is_free_of_cli_and_http_concerns():
