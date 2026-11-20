@@ -5,13 +5,15 @@ work on. The service knows nothing about the CLI or HTTP: callers pass a session
 """
 
 from dataclasses import dataclass
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 
 from sqlalchemy.orm import Session
 
+from kanon.db import session_scope
 from kanon.models import Procedure, ProcedureSection
 from kanon.procedures.parser import parse_procedure
 from kanon.procedures.repository import ProcedureRepository
+from kanon.settings import get_settings
 
 
 class ProcedureImportError(Exception):
@@ -71,3 +73,18 @@ def import_procedures(
         session.flush()
 
     return ImportSummary(commit_hash=target.hash, files=len(files), sections=section_count)
+
+
+def import_from_path(path: Path | None = None, commit: str | None = None) -> ImportSummary:
+    """Open the repository at `path` (default: the configured one) and import it, committing.
+
+    This is what `kanon init` runs; the command itself only parses arguments and prints.
+    """
+    if path is None:
+        path = get_settings().procedure_repo_path
+        if path is None:
+            raise ProcedureImportError(
+                "no repository given: pass a path or set KANON_PROCEDURE_REPO_PATH"
+            )
+    with ProcedureRepository(path) as repository, session_scope() as session:
+        return import_procedures(session, repository, commit)
