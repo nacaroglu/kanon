@@ -33,6 +33,12 @@ def _isolated_settings(monkeypatch, tmp_path):
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def alembic_config() -> Config:
+    cfg = Config(str(ROOT / "alembic.ini"))
+    cfg.set_main_option("script_location", str(ROOT / "alembic"))
+    return cfg
+
+
 @pytest.fixture(scope="session")
 def test_database_url() -> str:
     url = os.environ.get("KANON_TEST_DATABASE_URL")
@@ -48,9 +54,7 @@ def migrated_engine(test_database_url) -> Iterator[Engine]:
     os.environ["KANON_DATABASE_URL"] = test_database_url  # read by alembic/env.py
     get_settings.cache_clear()
     try:
-        cfg = Config(str(ROOT / "alembic.ini"))
-        cfg.set_main_option("script_location", str(ROOT / "alembic"))
-        command.upgrade(cfg, "head")
+        command.upgrade(alembic_config(), "head")
         yield get_engine(Settings(database_url=test_database_url))
     finally:
         if previous is None:
