@@ -5,7 +5,14 @@ description = "Kanon: early development."
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 license = { file = "LICENSE" }
-dependencies = []
+dependencies = [
+    "alembic>=1.20.1",
+    "fastapi>=0.163.1",
+    "psycopg[binary]>=3.3.9",
+    "pydantic-settings>=2.16.3",
+    "sqlalchemy>=2.1.9",
+    "uvicorn[standard]>=0.54.0",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -16,6 +23,9 @@ packages = ["src/kanon"]
 
 [dependency-groups]
 dev = [
+    "httpx2>=2.16.2",
+    "pre-commit>=4.7.0",
+    "pytest>=9.2.0",
     "ruff>=0.17.5",
 ]
 
@@ -26,3 +36,10 @@ src = ["src", "tests"]
 [tool.ruff.lint]
 # Small starter set: pycodestyle, pyflakes, isort, pyupgrade, bugbear.
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+# Generated migration files import helpers they may not use yet.
+"alembic/versions/*" = ["F401"]
