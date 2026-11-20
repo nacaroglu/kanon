@@ -17,6 +17,7 @@ htmlcov/
 
 # Local configuration
 .env
+/procedure-repo/
 
 # Editors / OS
 .idea/

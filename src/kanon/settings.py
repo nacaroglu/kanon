@@ -1,5 +1,7 @@
 from functools import lru_cache
+from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +12,21 @@ class Settings(BaseSettings):
 
     database_url: str
     log_level: str = "INFO"
+    # Directory holding the approved procedure repository. Only its existence is checked
+    # here; whether it is a Git repository is checked when the repository is opened.
+    procedure_repo_path: Path | None = None
+
+    @field_validator("procedure_repo_path")
+    @classmethod
+    def _procedure_repo_path_must_exist(cls, value: Path | None) -> Path | None:
+        if value is None:
+            return None
+        value = value.expanduser()
+        if not value.exists():
+            raise ValueError(f"procedure repository path does not exist: {value}")
+        if not value.is_dir():
+            raise ValueError(f"procedure repository path is not a directory: {value}")
+        return value
 
 
 @lru_cache

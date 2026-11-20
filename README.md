@@ -38,6 +38,14 @@ cp .env.example .env
 
 `KANON_DATABASE_URL` is required; the app refuses to start without it. `.env` is ignored by Git.
 
+`KANON_PROCEDURE_REPO_PATH` points at the approved procedure repository (see [ADR-002](docs/adr/002-procedure-repository.md)). If it is set to a path that does not exist, the app refuses to start with a clear message. Create the sample repository to try it:
+
+```bash
+scripts/make-sample-repo.sh ./procedure-repo
+```
+
+Docker Compose mounts the host directory `KANON_PROCEDURE_REPO_HOST_PATH` (default `./procedure-repo`) read-only at `/data/procedures` in the backend container and sets `KANON_PROCEDURE_REPO_PATH` accordingly.
+
 ### Database migrations
 
 Schema changes go through Alembic; the database URL is read from settings (`KANON_DATABASE_URL`), never from `alembic.ini`.

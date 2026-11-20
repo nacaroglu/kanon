@@ -1,5 +1,8 @@
 import os
+import shutil
+import subprocess
 from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
@@ -69,3 +72,56 @@ def db_session(migrated_engine) -> Iterator[Session]:
         session.close()
         transaction.rollback()
         connection.close()
+
+
+# --- Sample procedure repository ---------------------------------------------
+# Built from fixtures/sample-procedures by scripts/make-sample-repo.sh. The
+# script fixes author, committer, dates and messages, so the hashes below are
+# stable; if you change the fixture content, update them (the test that pins
+# them will tell you the new values).
+
+
+@dataclass(frozen=True)
+class SampleRepo:
+    path: Path
+    head: str  # newest commit
+    commits: tuple[str, ...]  # oldest first
+    procedure_paths: tuple[str, ...]  # at HEAD, sorted
+
+
+SAMPLE_COMMITS = (
+    "c8ddb7613fe0523249a0d926efa15a9e856ba001",  # 2026-01-05 expense reports
+    "17ef3a6cbd7331f21eb9412dcc64619685251925",  # 2026-02-10 remote work
+    "f41aeea2399b44ddcde3d0d37987afc560bfb981",  # 2026-03-16 incident response
+)
+SAMPLE_PROCEDURE_PATHS = (
+    "procedures/expense-reports.md",
+    "procedures/incident-response.md",
+    "procedures/remote-work.md",
+)
+
+
+def build_sample_repo(destination: Path) -> str:
+    """Create the sample repository at `destination` and return its HEAD hash."""
+    if shutil.which("git") is None or shutil.which("bash") is None:
+        pytest.skip("git and bash are required to build the sample repository")
+    result = subprocess.run(
+        ["bash", str(ROOT / "scripts" / "make-sample-repo.sh"), str(destination)],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return result.stdout.strip()
+
+
+@pytest.fixture
+def sample_repo(tmp_path_factory) -> SampleRepo:
+    """A fresh copy of the deterministic sample repository in a temporary directory."""
+    path = tmp_path_factory.mktemp("sample") / "repo"
+    head = build_sample_repo(path)
+    return SampleRepo(
+        path=path,
+        head=head,
+        commits=SAMPLE_COMMITS,
+        procedure_paths=SAMPLE_PROCEDURE_PATHS,
+    )
