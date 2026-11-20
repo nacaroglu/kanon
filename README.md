@@ -18,6 +18,15 @@ uv sync
 
 See [ADR-001](docs/adr/001-python-tooling.md) for the tooling decisions.
 
+### CLI
+
+```bash
+uv run kanon --help
+uv run kanon version
+```
+
+The CLI calls application code in-process rather than going through HTTP.
+=======
 ### Configuration
 
 Settings are read only through `kanon.settings.Settings` (environment variables with the `KANON_` prefix, or a `.env` file). Copy the example and adjust:
