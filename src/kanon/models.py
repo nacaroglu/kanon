@@ -1,13 +1,24 @@
-"""SQLAlchemy models. Git stays canonical; these tables are a queryable copy tied to a commit."""
+"""SQLAlchemy models.
+
+Git stays canonical for procedures; their tables are a queryable copy tied to a commit.
+"""
+
+import enum
+import uuid
+from datetime import datetime
 
 from sqlalchemy import (
     CheckConstraint,
+    DateTime,
+    Enum,
     ForeignKey,
     Integer,
     MetaData,
     String,
     Text,
     UniqueConstraint,
+    Uuid,
+    func,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -73,3 +84,51 @@ class ProcedureSection(Base):
     end_offset: Mapped[int] = mapped_column(Integer)  # exclusive
 
     procedure: Mapped[Procedure] = relationship(back_populates="sections")
+
+
+class SourceType(enum.StrEnum):
+    """The input categories v1 supports (Product Scope 1.3, section 2.3)."""
+
+    MARKDOWN = "markdown"
+    TXT = "txt"
+    PDF = "pdf"
+    DOCX = "docx"
+    TRANSCRIPT = "transcript"
+    TICKET_EXPORT = "ticket_export"
+
+
+SOURCE_TYPE_VALUES = tuple(t.value for t in SourceType)
+
+
+class Source(Base):
+    """A submitted source document. The file itself is kept on disk, named by its hash.
+
+    Authority and effective date are added by a later migration, on purpose.
+    """
+
+    __tablename__ = "sources"
+    __table_args__ = (
+        CheckConstraint(
+            "type IN (" + ", ".join(f"'{v}'" for v in SOURCE_TYPE_VALUES) + ")",
+            name="type_known",
+        ),
+        CheckConstraint("content_hash ~ '^[0-9a-f]{64}$'", name="content_hash_sha256"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    # What the submitter called the file. Untrusted text: display only, never a path.
+    original_filename: Mapped[str] = mapped_column(Text)
+    content_hash: Mapped[str] = mapped_column(String(64))  # SHA-256 of the bytes, lowercase hex
+    stored_path: Mapped[str] = mapped_column(Text)  # where the bytes live, derived from the hash
+    type: Mapped[SourceType] = mapped_column(
+        Enum(
+            SourceType,
+            native_enum=False,
+            create_constraint=False,  # the named CheckConstraint above is the constraint
+            length=20,
+            values_callable=lambda e: [m.value for m in e],
+        )
+    )
+    submitted_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
