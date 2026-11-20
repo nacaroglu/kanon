@@ -18,6 +18,15 @@ uv sync
 
 See [ADR-001](docs/adr/001-python-tooling.md) for the tooling decisions.
 
+### CLI
+
+```bash
+uv run kanon --help
+uv run kanon version
+```
+
+The CLI calls application code in-process rather than going through HTTP.
+=======
 ### Configuration
 
 Settings are read only through `kanon.settings.Settings` (environment variables with the `KANON_` prefix, or a `.env` file). Copy the example and adjust:
@@ -52,6 +61,10 @@ curl http://127.0.0.1:8000/health   # {"status":"ok"}
 
 The service binds to localhost by default (Product Scope 9.2).
 
+### Logging
+
+Logs are JSON, one object per line on stderr, with the level taken from `KANON_LOG_LEVEL`. Each HTTP request produces exactly one line with `method`, `path`, `status` and `duration_ms`. Log identifiers, never document content.
+=======
 ### Run with Docker Compose
 
 ```bash
@@ -73,6 +86,7 @@ curl http://127.0.0.1:8000/health
 ```
 
 The image installs from `uv.lock`, runs as a non-root user, and keeps dependencies in a separate layer from application code.
+
 
 ### Lint and format
 
