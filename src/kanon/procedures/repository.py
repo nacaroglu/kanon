@@ -82,7 +82,11 @@ class ProcedureRepository:
 
     def head_commit(self) -> Commit:
         """The commit that HEAD currently points to (through its branch, if any)."""
-        return self._commit(self._head_sha())
+        return self.get_commit()
+
+    def get_commit(self, commit: str | None = None) -> Commit:
+        """Resolve a hash (full or abbreviated), ref name, or HEAD (the default) to a commit."""
+        return self._commit(self._resolve_commit(commit).id)
 
     def list_procedure_files(self, commit: str | None = None) -> list[ProcedureFile]:
         """The procedure files as committed at `commit`, sorted by path.
